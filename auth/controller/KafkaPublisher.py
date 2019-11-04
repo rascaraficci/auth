@@ -57,6 +57,6 @@ class Publisher(threading.Thread):
     def run(self):
         try:
             self.init()
-        except:
-            LOGGER.critical("Failed to init kafkaPublisher... shutting down")
+        except Exception as e:
+            LOGGER.critical(f"Failed to init kafkaPublisher... Error: {e}. Shutting down")
             os.kill(os.getpid(), signal.SIGINT)
