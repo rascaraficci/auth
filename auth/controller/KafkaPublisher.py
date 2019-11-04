@@ -2,6 +2,8 @@ import base64
 import requests
 import logging
 import json
+import signal
+import os
 from conf import kafka_subject, kafka_host, data_broker_host, dojot_management_tenant
 from dojot.module import Messenger, Config, Log
 import threading
@@ -53,4 +55,8 @@ class Publisher(threading.Thread):
         LOGGER.debug("... messenger initialized.")
 
     def run(self):
-        self.init()
+        try:
+            self.init()
+        except:
+            LOGGER.critical("Failed to init kafkaPublisher... shutting down")
+            os.kill(os.getpid(), signal.SIGINT)
