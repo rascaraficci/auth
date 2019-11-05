@@ -59,3 +59,29 @@ services:
       driver: json-file
       options:
         max-size: 100m
+
+  data-broker:
+    image: dojot/data-broker:latest
+    restart: always
+    depends_on:
+      - kafka
+      - data-broker-redis
+      - auth
+    environment:
+      DOJOT_MANAGEMENT_USER: 'data-broker'
+      KAFKA_GROUP_ID: 'data-broker-group'
+      SERVICE_PORT: 80
+      DATA_BROKER_URL: 'http://data-broker:80'
+      LOG_LEVEL: 'info'
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  data-broker-redis:
+    image: "redis:5.0.5-alpine3.10"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
