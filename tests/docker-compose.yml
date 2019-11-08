@@ -7,6 +7,7 @@ services:
     depends_on:
       - postgres
       - auth-redis
+      - kafka
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,3 +36,52 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  zookeeper:
+    image: "zookeeper:3.4.14"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  kafka:
+    image: "wurstmeister/kafka:2.12-2.1.1"
+    depends_on:
+      - zookeeper
+    restart: always
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_NUM_PARTITIONS: 10
+      JMX_PORT: 1099
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  data-broker:
+    image: dojot/data-broker:latest
+    restart: always
+    depends_on:
+      - kafka
+      - data-broker-redis
+      - auth
+    environment:
+      DOJOT_MANAGEMENT_USER: 'data-broker'
+      KAFKA_GROUP_ID: 'data-broker-group'
+      SERVICE_PORT: 80
+      DATA_BROKER_URL: 'http://data-broker:80'
+      LOG_LEVEL: 'info'
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  data-broker-redis:
+    image: "redis:5.0.5-alpine3.10"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
