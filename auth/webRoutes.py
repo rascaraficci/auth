@@ -416,7 +416,8 @@ def list_tenants():
 
 # Initializing Kafka publisher
 LOGGER.debug("Starting publisher initialization thread...")
-Publisher().start()
+publisherThread = Publisher()
+publisherThread.start()
 LOGGER.debug("... publisher initialization thread started.")
 
 if __name__ == '__main__':
