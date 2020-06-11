@@ -35,8 +35,8 @@ def create_users():
         # if the user exist, chances are this scrip has been run before
         print("Querying database for user {}".format(user))
         another_user = db.session.query(User.id) \
-            .filter_by(username=user['username']) \
-            .one_or_none()
+                                .filter_by(username=user['username']) \
+                                .one_or_none()
         if another_user:
             print("This is not the first container run. Skipping")
             exit(0)
@@ -120,9 +120,7 @@ def create_permissions():
         permission_dict_helper('ro_export', "/export/(.*)", "GET"),
         permission_dict_helper('ro_image', "/fw-image/(.*)", "GET"),
         permission_dict_helper('all_image', "/fw-image/(.*)", "(.*)"),
-        permission_dict_helper(
-            'ro_mqtt_metrics', "/iotagent-mqtt/metrics", "GET"),
-        permission_dict_helper('all_backstage', "/graphql/(.*)", "(.*)"),
+        permission_dict_helper('all_backstage', "/graphql/(.*)", "(.*)")
     ]
 
     for p in predef_perms:
@@ -168,9 +166,8 @@ def add_permissions_group():
                 "ro_socketio",
                 "wo_import",
                 "ro_export",
-                "ro_mqtt_metrics",
-                "all_image",
-                "all_backstage"
+                "all_backstage",
+                "all_image"
             ]
         }
     ]
@@ -209,23 +206,21 @@ def populate():
     db.session.commit()
     print("Success")
 
-
 def create_database(num_retries=10, interval=3):
     connection = None
 
     attempt = 0
     while attempt < num_retries:
         try:
-            connection = psycopg2.connect(
-                user=CONFIG.dbUser, password=CONFIG.dbPdw, host=CONFIG.dbHost)
-            print("postgres ok")
+            connection = psycopg2.connect(user=CONFIG.dbUser, password=CONFIG.dbPdw, host=CONFIG.dbHost)
+            print ("postgres ok")
             break
         except Exception as e:
             print("Failed to connect to database")
-
+        
         attempt += 1
         sleep(interval)
-
+    
     if connection is None:
         print("Database took too long to boot. Giving up.")
         exit(1)
@@ -233,8 +228,7 @@ def create_database(num_retries=10, interval=3):
     if CONFIG.createDatabase:
         connection.autocommit = True
         cursor = connection.cursor()
-        cursor.execute(
-            "select true from pg_database where datname = '%s';" % CONFIG.dbName)
+        cursor.execute("select true from pg_database where datname = '%s';" % CONFIG.dbName)
         if len(cursor.fetchall()) == 0:
             print("will attempt to create database")
             cursor.execute("CREATE database %s;" % CONFIG.dbName)
@@ -242,7 +236,6 @@ def create_database(num_retries=10, interval=3):
             db.create_all()
         else:
             print("Database already exists")
-
 
 create_database()
 populate()
