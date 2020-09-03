@@ -144,10 +144,11 @@ Service is the token that associates the user with the set of devices and flows 
 
 ## Individual user settings [/user/{id}]
 Access a user's authorization and identification information
-+ parameters
+
++ Parameters
   + id: 1 (required, string) - The user ID
 
-### Get user info [GET /user/{id}]
+### Get user info [GET]
 Retrieves all information from a specific registered user
 + Request
     + Headers
@@ -181,7 +182,7 @@ Retrieves all information from a specific registered user
             }
 
 
-### Update user info [PUT /user/{id}]
+### Update user info [PUT]
 Replaces user information. Fields or attributes that are not informed will revert to their defaults.
 + Request (application/json)
     + Headers
@@ -214,7 +215,7 @@ Replaces user information. Fields or attributes that are not informed will rever
                 "status": 404
             }
 
-### Remove user [DELETE /user/{id}]
+### Remove user [DELETE]
 Removes a user from the system
 + Request
     + Headers
